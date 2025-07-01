@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USA Tip Calculator - For International Travelers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            line-height: 1.3;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: 12px 8px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            line-height: 1.3;
+            font-weight: 500;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: block;
+            margin: 30px auto;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results h3 {
+            margin-bottom: 20px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-value {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+        }
+
+        .tip-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tip-info h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        .tip-info p {
+            color: #856404;
+            font-size: clamp(0.85rem, 2vw, 0.9rem);
+            line-height: 1.4;
+        }
+
+        .reference-box {
+            background: #e8f4f8;
+            border: 1px solid #b3d9e8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .reference-box h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        .reference-box p {
+            color: #2c3e50;
+            font-size: clamp(0.85rem, 2vw, 0.9rem);
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-group > div {
+            flex: 1;
+        }
+
+        .input-suffix {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            color: #6c757d;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Currency results responsive */
+        #currencyResults {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        #currencyResults > div {
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            padding: 6px 0;
+        }
+
+        /* Checkbox styling for delivery options */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .checkbox-option:hover {
+            border-color: #667eea;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            padding: 0;
+        }
+
+        .checkbox-option input[type="checkbox"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .checkbox-option label {
+            margin: 0;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+
+        /* Article styling */
+        .article-section {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid #2ecc71;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .article-section h2 {
+            color: #2c3e50;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .article-section h3 {
+            color: #34495e;
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
+            margin: 25px 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .article-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .article-section ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .article-section li {
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .highlight-box {
+            background: #e8f6f3;
+            border: 1px solid #16a085;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h4 {
+            color: #16a085;
+            margin-bottom: 10px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 15px;
+                margin: 5px auto;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .radio-option {
+                min-width: unset;
+            }
+
+            .radio-option label {
+                padding: 15px 12px;
+                font-size: clamp(0.85rem, 2.2vw, 1rem);
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .input-suffix {
+                text-align: center;
+                min-width: unset;
+                width: 100%;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+                text-align: left;
+                padding: 12px 0;
+            }
+
+            .result-value {
+                align-self: flex-end;
+                font-size: clamp(1.1rem, 3vw, 1.3rem);
+            }
+
+            select, input {
+                padding: 15px 12px;
+                font-size: clamp(16px, 3vw, 18px); /* Prevent zoom on iOS */
+            }
+
+            .article-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .checkbox-group {
+                gap: 8px;
+            }
+
+            .checkbox-option {
+                padding: 12px;
+            }
+        }
+
+        /* Small mobile adjustments */
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .section {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .calculate-btn {
+                padding: 12px 25px;
+                margin: 20px auto;
+            }
+
+            .results {
+                padding: 15px;
+            }
+
+            .tip-info {
+                padding: 12px;
+            }
+        }
+
+        /* Additional responsive improvements */
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px 10px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .section {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .calculate-btn {
+                padding: 15px 25px;
+                margin: 20px auto;
+                font-size: clamp(1rem, 3vw, 1.1rem);
+            }
+
+            .results {
+                padding: 15px;
+            }
+
+            .tip-info {
+                padding: 12px;
+            }
+
+            .reference-box {
+                padding: 12px;
+            }
+
+            .input-group {
+                gap: 8px;
+            }
+
+            .input-suffix {
+                padding: 10px 8px;
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+
+            .article-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+        }
+
+        /* Large screen adjustments */
+        @media (min-width: 1200px) {
+            body {
+                padding: 30px;
+            }
+
+            .content {
+                padding: 40px;
+            }
+
+            .section {
+                padding: 30px;
+            }
+
+            .radio-option label {
+                padding: 15px 12px;
+            }
+
+            .article-section {
+                padding: 40px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .container {
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: none !important;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .calculate-btn,
+            #currencySection {
+                display: none !important;
+            }
+
+            .results {
+                background: #f8f9fa !important;
+                color: #000 !important;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            /* Keep light theme for now as it's more universally accessible */
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇺🇸 USA Tip Calculator</h1>
+            <p>Your guide to American tipping culture</p>
+        </div>
+        
+        <div class="content">
+            <!-- This tip-info section is always visible -->
+            <div class="tip-info">
+                <h4>💡 Complete USA Tipping Guide - Always Up-to-Date</h4>
+                <p>This comprehensive calculator covers every tipping scenario you'll encounter in America. Perfect for <strong>international travelers, tourists, business visitors, and first-time visitors</strong> to the United States. From restaurants to hotels, rideshares to delivery - we've got you covered with current, real-world tipping customs that Americans actually use.</p>
+            </div>
+
+            <div class="section">
+                <h3>1. Service Type</h3>
+                <div class="form-group">
+                    <label for="serviceType">What service are you paying for?</label>
+                    <select id="serviceType" onchange="updateFormForService()">
+                        <option value="">-- Choose a service type --</option>
+                        <option value="restaurant">Restaurant/Dining</option>
+                        <option value="bar">Bar/Drinks</option>
+                        <option value="taxi">Taxi/Rideshare</option>
+                        <option value="hotel-bellhop">Hotel Bellhop</option>
+                        <option value="hotel-housekeeping">Hotel Housekeeping</option>
+                        <option value="hair-salon">Hair Salon/Spa</option>
+                        <option value="food-delivery">Food Delivery</option>
+                        <option value="coffee">Coffee Shop</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic content sections -->
+            <div id="dynamicSections"></div>
+
+            <button class="calculate-btn" onclick="calculateTip()" id="calculateButton" disabled>Select a service type to continue</button>
+
+            <div id="results" class="results">
+                <h3>💡 Your Tip Breakdown</h3>
+                <div id="tipResults"></div>
+            </div>
+
+            <div id="currencySection" class="section" style="display: none; background: #f1f3f4; border-left: 5px solid #4285f4;">
+                <h3>💱 Convert to Your Currency</h3>
+                <div class="form-group">
+                    <label for="targetCurrency">Select your currency:</label>
+                    <select id="targetCurrency" onchange="showCurrencyResults()">
+                        <option value="">Choose currency...</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="GBP">British Pound (GBP)</option>
+                        <option value="JPY">Japanese Yen (JPY)</option>
+                        <option value="CAD">Canadian Dollar (CAD)</option>
+                        <option value="AUD">Australian Dollar (AUD)</option>
+                        <option value="CHF">Swiss Franc (CHF)</option>
+                        <option value="CNY">Chinese Yuan (CNY)</option>
+                        <option value="INR">Indian Rupee (INR)</option>
+                        <option value="KRW">South Korean Won (KRW)</option>
+                        <option value="MXN">Mexican Peso (MXN)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button onclick="updateCurrencyConversion()" style="background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: all 0.3s ease; width: 100%;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(66,133,244,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        🔄 Update Currency Conversion
+                    </button>
+                </div>
+                
+                <div id="currencyResults" style="display: none; background: white; padding: 20px; border-radius: 10px; margin-top: 15px; border: 2px solid #4285f4;">
+                    <h4 style="color: #4285f4; margin-bottom: 15px;">💰 Amounts in <span id="selectedCurrencyName"></span></h4>
+                    <div id="convertedBreakdown"></div>
+                </div>
+            </div>
+
+            <!-- SEO-Optimized Article Section -->
+            <div class="article-section">
+                <h2>🌟 The Complete Guide to American Tipping Culture for International Visitors</h2>
+                
+                <p>Planning a trip to the United States? Understanding American tipping etiquette is crucial for any international traveler, tourist, or business visitor. Unlike many countries around the world, tipping in America isn't just expected – it's an essential part of the service industry culture and often makes up a significant portion of workers' income.</p>
+
+                <h3>Why Tipping Matters So Much in America</h3>
+                <p>The United States has a unique service culture where many workers in restaurants, hotels, taxis, and other service industries receive lower base wages with the expectation that tips will supplement their income. This system, while different from many other countries, is deeply ingrained in American society. When you tip appropriately, you're not just showing appreciation – you're helping ensure fair compensation for hardworking service professionals.</p>
+
+                <div class="highlight-box">
+                    <h4>🚨 Critical Tip for First-Time USA Visitors</h4>
+                    <p>In America, not tipping when service is provided is considered extremely rude and can cause real financial hardship for service workers. Even if tipping isn't customary in your home country, it's essential to adapt to local customs when visiting the United States.</p>
+                </div>
+
+                <h3>When You Should Tip in America</h3>
+                <p>As an international visitor, you'll encounter tipping situations throughout your American journey. Here are the most common scenarios where tips are expected:</p>
+                <ul>
+                    <li><strong>Restaurants and cafes:</strong> Always tip your server when you receive table service</li>
+                    <li><strong>Bars and pubs:</strong> Bartenders expect tips for drink service</li>
+                    <li><strong>Hotels:</strong> Bellhops, housekeeping, concierge, and room service staff</li>
+                    <li><strong>Transportation:</strong> Taxi drivers, rideshare drivers, and airport shuttles</li>
+                    <li><strong>Food delivery:</strong> Pizza delivery, meal delivery apps, and takeout</li>
+                    <li><strong>Personal services:</strong> Hair salons, spas, nail salons, and massage therapists</li>
+                    <li><strong>Tour guides:</strong> City tours, museum guides, and excursion leaders</li>
+                </ul>
+
+                <h3>What Not to Do: Common Tipping Mistakes by International Travelers</h3>
+                <p>Avoid these common mistakes that can embarrass you or offend service workers during your American vacation:</p>
+                <ul>
+                    <li><strong>Don't leave no tip:</strong> Unless service was truly terrible, always leave something</li>
+                    <li><strong>Don't tip on the total with tax:</strong> In restaurants, calculate tips on the pre-tax amount</li>
+                    <li><strong>Don't assume service charges equal tips:</strong> Some venues add service charges that don't go to your server</li>
+                    <li><strong>Don't tip with foreign currency:</strong> Always tip in US dollars</li>
+                    <li><strong>Don't round down significantly:</strong> If your tip calculates to $4.80, don't leave $4.00</li>
+                    <li><strong>Don't ask for your tip back:</strong> Once given, tips should never be requested back</li>
+                </ul>
+
+                <h3>Understanding American Service Expectations</h3>
+                <p>American service culture emphasizes friendliness, attentiveness, and going above and beyond for customers. Service workers often introduce themselves by name, check on you frequently, and aim to create a personal connection. This isn't fake – it's genuine American hospitality, and good service should be rewarded with appropriate tips.</p>
+
+                <div class="highlight-box">
+                    <h4>💡 Pro Tip for Business Travelers</h4>
+                    <p>If you're visiting America for business and entertaining clients, understanding proper tipping etiquette will demonstrate cultural awareness and professionalism. Your American colleagues will notice and appreciate your cultural sensitivity.</p>
+                </div>
+
+                <h3>How to Handle Group Situations and Business Meals</h3>
+                <p>When dining with American colleagues or in group settings, pay attention to how locals handle tipping. In business meals, the person who invited usually handles the tip. If you're splitting a bill among friends, make sure everyone contributes fairly to the tip portion – don't let one person shoulder the entire tip burden.</p>
+
+                <h3>Regional Differences Across America</h3>
+                <p>While tipping customs are fairly consistent across the United States, you might notice some regional variations. Major cities like New York, Los Angeles, and San Francisco often have slightly higher tipping expectations, while smaller towns might be more forgiving of minor tipping mistakes. However, the basic principles remain the same regardless of location.</p>
+
+                <h3>Digital Payments and Modern Tipping</h3>
+                <p>With the rise of credit cards, mobile payments, and contactless transactions, tipping has evolved in America. Most point-of-sale systems now prompt for tips, and many businesses use tablet-based payment systems that suggest tip amounts. Don't feel pressured by high suggested amounts – you can always select "other" and enter your preferred tip.</p>
+
+                <h3>Building Positive Relationships During Your Stay</h3>
+                <p>Proper tipping isn't just about following rules – it's about building positive relationships during your American experience. Hotel staff who remember you tip well will provide better service, restaurant servers will be more attentive, and taxi drivers will be more helpful with directions and recommendations.</p>
+
+                <div class="highlight-box">
+                    <h4>🎯 Remember This Golden Rule</h4>
+                    <p>When in doubt about tipping in America, it's better to tip slightly more than risk tipping too little. Your generosity will be remembered and appreciated, and you'll have a much more positive experience during your visit to the United States.</p>
+                </div>
+
+                <p>Understanding and respecting American tipping culture will enhance your travel experience, help you avoid awkward situations, and ensure you're treated well throughout your visit. Use the calculator above to determine appropriate tip amounts for any service situation you encounter during your American adventure.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Exchange rates (simplified - in real app, use live API)
+        const exchangeRates = {
+            EUR: 0.92,
+            GBP: 0.79,
+            JPY: 148.5,
+            CAD: 1.36,
+            AUD: 1.50,
+            CHF: 0.89,
+            CNY: 7.23,
+            INR: 83.2,
+            KRW: 1320,
+            MXN: 17.8
+        };
+
+        // Store calculation results globally
+        let calculationResults = null;
+
+        // Service configurations
+        const serviceConfigs = {
+            restaurant: {
+                title: "Restaurant/Dining",
+                reference: {
+                    poor: "15-18%",
+                    standard: "18-22%", 
+                    excellent: "22%+"
+                },
+                sections: [
+                    {
+                        title: "2. Bill Amount",
+                        html: `
+                            <div class="form-group">
+                                <label for="billAmount">Enter your bill amount (USD)</label>
+                                <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Calculate tip on:</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="pretax" name="taxOption" value="pretax" checked>
+                                        <label for="pretax">Pre-tax (Recommended)</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="posttax" name="taxOption" value="posttax">
+                                        <label for="posttax">Post-tax</label>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>15-18%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>18-22%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>22%+</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip percentage</label>
+                                <div class="input-group">
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="20" step="0.01" min="0">
+                                    </div>
+                                    <div class="input-suffix">%</div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "4. Split Bill (Optional)",
+                        html: `
+                            <div class="form-group">
+                                <label for="splitBetween">Split between how many people?</label>
+                                <input type="number" id="splitBetween" placeholder="1" min="1" value="1">
+                            </div>
+                        `
+                    }
+                ]
+            },
+            bar: {
+                title: "Bar/Drinks",
+                reference: {
+                    poor: "$1 per drink",
+                    standard: "$1-2 per drink",
+                    excellent: "$2+ per drink"
+                },
+                sections: [
+                    {
+                        title: "2. Your Order",
+                        html: `
+                            <div class="form-group">
+                                <label for="drinkCount">Number of drinks</label>
+                                <input type="number" id="drinkCount" placeholder="1" min="1" value="1">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>$1/drink</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>$1-2/drink</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>$2+/drink</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip per drink</label>
+                                <div class="input-group">
+                                    <div class="input-suffix">$</div>
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="2" step="0.25" min="0">
+                                    </div>
+                                    <div class="input-suffix">per drink</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            taxi: {
+                title: "Taxi/Rideshare",
+                reference: {
+                    poor: "10-15%",
+                    standard: "15-20%",
+                    excellent: "20%+"
+                },
+                sections: [
+                    {
+                        title: "2. Ride Details",
+                        html: `
+                            <div class="form-group">
+                                <label for="fareAmount">Ride fare amount (USD)</label>
+                                <input type="number" id="fareAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>10-15%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>15-20%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>20%+</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip percentage</label>
+                                <div class="input-group">
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="18" step="0.01" min="0">
+                                    </div>
+                                    <div class="input-suffix">%</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "hotel-bellhop": {
+                title: "Hotel Bellhop",
+                reference: {
+                    poor: "$1-2 per bag",
+                    standard: "$2-3 per bag",
+                    excellent: "$3+ per bag"
+                },
+                sections: [
+                    {
+                        title: "2. Luggage Details",
+                        html: `
+                            <div class="form-group">
+                                <label for="bagCount">Number of bags</label>
+                                <input type="number" id="bagCount" placeholder="1" min="1" value="1">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>$1-2/bag</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>$2-3/bag</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>$3+/bag</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip per bag</label>
+                                <div class="input-group">
+                                    <div class="input-suffix">$</div>
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="3" step="0.50" min="0">
+                                    </div>
+                                    <div class="input-suffix">per bag</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "hotel-housekeeping": {
+                title: "Hotel Housekeeping",
+                reference: {
+                    poor: "$2-3 per night",
+                    standard: "$3-5 per night",
+                    excellent: "$5+ per night"
+                },
+                sections: [
+                    {
+                        title: "2. Stay Details",
+                        html: `
+                            <div class="form-group">
+                                <label for="nightCount">Number of nights</label>
+                                <input type="number" id="nightCount" placeholder="1" min="1" value="1">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>$2-3/night</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>$3-5/night</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>$5+/night</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip per night</label>
+                                <div class="input-group">
+                                    <div class="input-suffix">$</div>
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="4" step="0.50" min="0">
+                                    </div>
+                                    <div class="input-suffix">per night</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "hair-salon": {
+                title: "Hair Salon/Spa",
+                reference: {
+                    poor: "15-18%",
+                    standard: "18-25%",
+                    excellent: "25%+"
+                },
+                sections: [
+                    {
+                        title: "2. Service Cost",
+                        html: `
+                            <div class="form-group">
+                                <label for="serviceAmount">Service cost (USD)</label>
+                                <input type="number" id="serviceAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>15-18%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>18-25%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>25%+</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip percentage</label>
+                                <div class="input-group">
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="20" step="0.01" min="0">
+                                    </div>
+                                    <div class="input-suffix">%</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "food-delivery": {
+                title: "Food Delivery",
+                reference: {
+                    poor: "15-18%",
+                    standard: "18-22%",
+                    excellent: "22%+"
+                },
+                sections: [
+                    {
+                        title: "2. Order Details",
+                        html: `
+                            <div class="form-group">
+                                <label for="orderAmount">Order total (USD)</label>
+                                <input type="number" id="orderAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Delivery Conditions",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor Service<br><small>15-18%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard Service<br><small>18-22%</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent Service<br><small>22%+</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Special delivery conditions (optional):</label>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" id="difficultDelivery" onchange="updateDeliveryTip()">
+                                        <label for="difficultDelivery">Difficult Delivery (+$2) - Bad weather, stairs, long walk, etc.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em; color: #666;">
+                                <p><strong>Custom tip percentage (optional):</strong></p>
+                                <div class="input-group">
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="20" step="0.01" min="0">
+                                    </div>
+                                    <div class="input-suffix">%</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            coffee: {
+                title: "Coffee Shop",
+                reference: {
+                    poor: "$0 (optional)",
+                    standard: "$1-2",
+                    excellent: "$2+"
+                },
+                sections: [
+                    {
+                        title: "2. Order Details",
+                        html: `
+                            <div class="form-group">
+                                <label for="drinkCount">Number of drinks/items</label>
+                                <input type="number" id="drinkCount" placeholder="1" min="1" value="1">
+                            </div>
+                        `
+                    },
+                    {
+                        title: "3. Service Quality & Your Tip",
+                        html: `
+                            <div class="form-group">
+                                <label>How was your service?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="poor" name="serviceQuality" value="poor">
+                                        <label for="poor">Poor<br><small>$0 (optional)</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="standard" name="serviceQuality" value="standard" checked>
+                                        <label for="standard">Standard<br><small>$1-2</small></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="excellent" name="serviceQuality" value="excellent">
+                                        <label for="excellent">Excellent<br><small>$2+</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipInput">Or enter custom tip amount</label>
+                                <div class="input-group">
+                                    <div class="input-suffix">$</div>
+                                    <div>
+                                        <input type="number" id="tipInput" placeholder="1.50" step="0.25" min="0">
+                                    </div>
+                                    <div class="input-suffix">total</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            }
+        };
+
+        function updateFormForService() {
+            const serviceType = document.getElementById('serviceType').value;
+            const dynamicSections = document.getElementById('dynamicSections');
+            const calculateButton = document.getElementById('calculateButton');
+            
+            // If no service type is selected, clear the form and disable button
+            if (!serviceType) {
+                dynamicSections.innerHTML = '';
+                calculateButton.disabled = true;
+                calculateButton.textContent = 'Select a service type to continue';
+                // Hide results and currency sections
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('currencySection').style.display = 'none';
+                return;
+            }
+            
+            const config = serviceConfigs[serviceType];
+            
+            if (!config) {
+                console.error('Service configuration not found for:', serviceType);
+                return;
+            }
+            
+            let html = '';
+            
+            // Add reference box
+            html += `
+                <div class="section">
+                    <div class="reference-box">
+                        <h4>📖 ${config.title} Tipping Guide</h4>
+                        <p><strong>Poor service:</strong> ${config.reference.poor}<br>
+                        <strong>Standard service:</strong> ${config.reference.standard}<br>
+                        <strong>Excellent service:</strong> ${config.reference.excellent}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add service-specific sections
+            config.sections.forEach(section => {
+                html += `
+                    <div class="section">
+                        <h3>${section.title}</h3>
+                        ${section.html}
+                    </div>
+                `;
+            });
+            
+            dynamicSections.innerHTML = html;
+            
+            // Enable the calculate button and update text
+            calculateButton.disabled = false;
+            calculateButton.textContent = 'Calculate Tip 💰';
+            
+            // Add event listeners for service quality radio buttons with slight delay to ensure DOM is ready
+            setTimeout(() => {
+                document.querySelectorAll('input[name="serviceQuality"]').forEach(radio => {
+                    radio.addEventListener('change', updateTipFromQuality);
+                });
+            }, 100);
+        }
+
+        function updateTipFromQuality() {
+            try {
+                const serviceType = document.getElementById('serviceType').value;
+                const quality = document.querySelector('input[name="serviceQuality"]:checked')?.value;
+                const tipInput = document.getElementById('tipInput');
+                
+                if (!quality || !tipInput) return;
+                
+                // Set suggested tip based on service type and quality
+                const suggestions = {
+                    restaurant: { poor: 16, standard: 20, excellent: 25 },
+                    "hair-salon": { poor: 16, standard: 22, excellent: 28 },
+                    taxi: { poor: 12, standard: 18, excellent: 23 },
+                    bar: { poor: 1, standard: 1.5, excellent: 2.5 },
+                    "hotel-bellhop": { poor: 1.5, standard: 2.5, excellent: 4 },
+                    "hotel-housekeeping": { poor: 2.5, standard: 4, excellent: 6 },
+                    "food-delivery": { poor: 16, standard: 20, excellent: 25 },
+                    coffee: { poor: 0, standard: 1.5, excellent: 2.5 }
+                };
+                
+                if (suggestions[serviceType] && suggestions[serviceType][quality] !== undefined) {
+                    tipInput.value = suggestions[serviceType][quality];
+                }
+            } catch (error) {
+                console.error('Update tip from quality error:', error);
+                // Don't show alert for this non-critical error
+            }
+        }
+
+        function updateDeliveryTip() {
+            // This function will be called when the difficult delivery checkbox is changed
+            // The actual logic is handled in calculateTip() function
+        }
+
+        function calculateTip() {
+            const serviceType = document.getElementById('serviceType').value;
+            
+            if (!serviceType) {
+                alert('Please select a service type first');
+                return;
+            }
+            
+            const tipInput = document.getElementById('tipInput');
+            
+            if (!tipInput) {
+                alert('Please wait for the form to load completely');
+                return;
+            }
+            
+            const customTip = parseFloat(tipInput.value || 0);
+            
+            if (!customTip || customTip < 0) {
+                alert('Please enter a valid tip amount');
+                return;
+            }
+            
+            let results = {};
+            
+            try {
+                switch(serviceType) {
+                    case 'restaurant':
+                        const billAmountEl = document.getElementById('billAmount');
+                        const splitBetweenEl = document.getElementById('splitBetween');
+                        
+                        if (!billAmountEl || !splitBetweenEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const billAmount = parseFloat(billAmountEl.value || 0);
+                        const splitBetween = parseInt(splitBetweenEl.value || 1);
+                        
+                        if (!billAmount || billAmount <= 0) {
+                            alert('Please enter a valid bill amount');
+                            return;
+                        }
+                        
+                        if (splitBetween < 1) {
+                            alert('Split must be at least 1 person');
+                            return;
+                        }
+                        
+                        const tipAmount = billAmount * (customTip / 100);
+                        const totalAmount = billAmount + tipAmount;
+                        
+                        results = {
+                            serviceType: 'Restaurant',
+                            billAmount,
+                            tipAmount,
+                            totalAmount,
+                            tipPercentage: customTip,
+                            splitBetween,
+                            perPersonBill: billAmount / splitBetween,
+                            perPersonTip: tipAmount / splitBetween,
+                            perPersonTotal: totalAmount / splitBetween
+                        };
+                        break;
+                        
+                    case 'bar':
+                        const drinkCountEl = document.getElementById('drinkCount');
+                        
+                        if (!drinkCountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const drinkCount = parseInt(drinkCountEl.value || 1);
+                        
+                        if (drinkCount < 1) {
+                            alert('Number of drinks must be at least 1');
+                            return;
+                        }
+                        
+                        const totalTip = customTip * drinkCount;
+                        
+                        results = {
+                            serviceType: 'Bar',
+                            drinkCount,
+                            tipPerDrink: customTip,
+                            totalTip
+                        };
+                        break;
+                        
+                    case 'taxi':
+                        const fareAmountEl = document.getElementById('fareAmount');
+                        
+                        if (!fareAmountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const fareAmount = parseFloat(fareAmountEl.value || 0);
+                        
+                        if (!fareAmount || fareAmount <= 0) {
+                            alert('Please enter a valid fare amount');
+                            return;
+                        }
+                        
+                        const taxiTipAmount = fareAmount * (customTip / 100);
+                        const taxiTotalAmount = fareAmount + taxiTipAmount;
+                        
+                        results = {
+                            serviceType: 'Taxi/Rideshare',
+                            fareAmount,
+                            tipAmount: taxiTipAmount,
+                            totalAmount: taxiTotalAmount,
+                            tipPercentage: customTip
+                        };
+                        break;
+                        
+                    case 'hotel-bellhop':
+                        const bagCountEl = document.getElementById('bagCount');
+                        
+                        if (!bagCountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const bagCount = parseInt(bagCountEl.value || 1);
+                        
+                        if (bagCount < 1) {
+                            alert('Number of bags must be at least 1');
+                            return;
+                        }
+                        
+                        const bellhopTotalTip = customTip * bagCount;
+                        
+                        results = {
+                            serviceType: 'Hotel Bellhop',
+                            bagCount,
+                            tipPerBag: customTip,
+                            totalTip: bellhopTotalTip
+                        };
+                        break;
+                        
+                    case 'hotel-housekeeping':
+                        const nightCountEl = document.getElementById('nightCount');
+                        
+                        if (!nightCountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const nightCount = parseInt(nightCountEl.value || 1);
+                        
+                        if (nightCount < 1) {
+                            alert('Number of nights must be at least 1');
+                            return;
+                        }
+                        
+                        const housekeepingTotalTip = customTip * nightCount;
+                        
+                        results = {
+                            serviceType: 'Hotel Housekeeping',
+                            nightCount,
+                            tipPerNight: customTip,
+                            totalTip: housekeepingTotalTip
+                        };
+                        break;
+                        
+                    case 'hair-salon':
+                        const serviceAmountEl = document.getElementById('serviceAmount');
+                        
+                        if (!serviceAmountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const serviceAmount = parseFloat(serviceAmountEl.value || 0);
+                        
+                        if (!serviceAmount || serviceAmount <= 0) {
+                            alert('Please enter a valid service amount');
+                            return;
+                        }
+                        
+                        const salonTipAmount = serviceAmount * (customTip / 100);
+                        const salonTotalAmount = serviceAmount + salonTipAmount;
+                        
+                        results = {
+                            serviceType: 'Hair Salon/Spa',
+                            serviceAmount,
+                            tipAmount: salonTipAmount,
+                            totalAmount: salonTotalAmount,
+                            tipPercentage: customTip
+                        };
+                        break;
+                        
+                    case 'food-delivery':
+                        const orderAmountEl = document.getElementById('orderAmount');
+                        
+                        if (!orderAmountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const orderAmount = parseFloat(orderAmountEl.value || 0);
+                        
+                        if (!orderAmount || orderAmount <= 0) {
+                            alert('Please enter a valid order amount');
+                            return;
+                        }
+                        
+                        // Calculate base tip from percentage
+                        let deliveryTipAmount = orderAmount * (customTip / 100);
+                        
+                        // Check for difficult delivery condition
+                        const difficultDelivery = document.getElementById('difficultDelivery');
+                        if (difficultDelivery && difficultDelivery.checked) {
+                            deliveryTipAmount += 2; // Add $2 for difficult delivery
+                        }
+                        
+                        // Ensure minimum tip of $3
+                        deliveryTipAmount = Math.max(deliveryTipAmount, 3);
+                        
+                        results = {
+                            serviceType: 'Food Delivery',
+                            orderAmount,
+                            tipAmount: deliveryTipAmount,
+                            totalAmount: orderAmount + deliveryTipAmount,
+                            tipPercentage: customTip,
+                            difficultDelivery: difficultDelivery && difficultDelivery.checked,
+                            minimumApplied: (orderAmount * (customTip / 100) < 3)
+                        };
+                        break;
+                        
+                    case 'coffee':
+                        const coffeeCountEl = document.getElementById('drinkCount');
+                        
+                        if (!coffeeCountEl) {
+                            alert('Form not fully loaded. Please try again.');
+                            return;
+                        }
+                        
+                        const coffeeCount = parseInt(coffeeCountEl.value || 1);
+                        
+                        if (coffeeCount < 1) {
+                            alert('Number of items must be at least 1');
+                            return;
+                        }
+                        
+                        results = {
+                            serviceType: 'Coffee Shop',
+                            itemCount: coffeeCount,
+                            tipAmount: customTip
+                        };
+                        break;
+                        
+                    default:
+                        alert('Unknown service type. Please refresh the page.');
+                        return;
+                }
+                
+                calculationResults = results;
+                displayResults(results);
+                
+            } catch (error) {
+                console.error('Calculation error:', error);
+                alert('An error occurred during calculation. Please try again.');
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const tipResultsDiv = document.getElementById('tipResults');
+            
+            let html = '';
+            
+            switch(data.serviceType) {
+                case 'Restaurant':
+                    html = `
+                        <div class="result-item">
+                            <span>Bill Amount:</span>
+                            <span class="result-value">$${data.billAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip (${data.tipPercentage}%):</span>
+                            <span class="result-value">$${data.tipAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Amount:</span>
+                            <span class="result-value">$${data.totalAmount.toFixed(2)}</span>
+                        </div>
+                    `;
+                    
+                    if (data.splitBetween > 1) {
+                        html += `
+                            <div class="result-item" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.3);">
+                                <span>Split ${data.splitBetween} ways:</span>
+                                <span></span>
+                            </div>
+                            <div class="result-item">
+                                <span>Bill per person:</span>
+                                <span class="result-value">$${data.perPersonBill.toFixed(2)}</span>
+                            </div>
+                            <div class="result-item">
+                                <span>Tip per person:</span>
+                                <span class="result-value">$${data.perPersonTip.toFixed(2)}</span>
+                            </div>
+                            <div class="result-item">
+                                <span>Total per person:</span>
+                                <span class="result-value">$${data.perPersonTotal.toFixed(2)}</span>
+                            </div>
+                        `;
+                    }
+                    break;
+                    
+                case 'Bar':
+                    html = `
+                        <div class="result-item">
+                            <span>Number of drinks:</span>
+                            <span class="result-value">${data.drinkCount}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip per drink:</span>
+                            <span class="result-value">$${data.tipPerDrink.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total tip:</span>
+                            <span class="result-value">$${data.totalTip.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Taxi/Rideshare':
+                    html = `
+                        <div class="result-item">
+                            <span>Ride fare:</span>
+                            <span class="result-value">$${data.fareAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip (${data.tipPercentage}%):</span>
+                            <span class="result-value">$${data.tipAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total amount:</span>
+                            <span class="result-value">$${data.totalAmount.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Hotel Bellhop':
+                    html = `
+                        <div class="result-item">
+                            <span>Number of bags:</span>
+                            <span class="result-value">${data.bagCount}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip per bag:</span>
+                            <span class="result-value">$${data.tipPerBag.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total tip:</span>
+                            <span class="result-value">$${data.totalTip.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Hotel Housekeeping':
+                    html = `
+                        <div class="result-item">
+                            <span>Number of nights:</span>
+                            <span class="result-value">${data.nightCount}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip per night:</span>
+                            <span class="result-value">$${data.tipPerNight.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total tip:</span>
+                            <span class="result-value">$${data.totalTip.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Hair Salon/Spa':
+                    html = `
+                        <div class="result-item">
+                            <span>Service cost:</span>
+                            <span class="result-value">$${data.serviceAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip (${data.tipPercentage}%):</span>
+                            <span class="result-value">$${data.tipAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total amount:</span>
+                            <span class="result-value">$${data.totalAmount.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Food Delivery':
+                    html = `
+                        <div class="result-item">
+                            <span>Order amount:</span>
+                            <span class="result-value">$${data.orderAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Base tip (${data.tipPercentage}%):</span>
+                            <span class="result-value">$${(data.orderAmount * (data.tipPercentage / 100)).toFixed(2)}</span>
+                        </div>
+                    `;
+                    
+                    if (data.difficultDelivery) {
+                        html += `
+                            <div class="result-item">
+                                <span>Difficult delivery bonus:</span>
+                                <span class="result-value">+$2.00</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (data.minimumApplied) {
+                        html += `
+                            <div class="result-item" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                <span>Minimum tip applied:</span>
+                                <span class="result-value" style="color: #fff;">$3.00 minimum</span>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `
+                        <div class="result-item">
+                            <span>Final delivery tip:</span>
+                            <span class="result-value">$${data.tipAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total amount:</span>
+                            <span class="result-value">$${data.totalAmount.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'Coffee Shop':
+                    html = `
+                        <div class="result-item">
+                            <span>Number of items:</span>
+                            <span class="result-value">${data.itemCount}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Tip amount:</span>
+                            <span class="result-value">$${data.tipAmount.toFixed(2)}</span>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            tipResultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+            
+            // Show currency converter section
+            document.getElementById('currencySection').style.display = 'block';
+        }
+
+        function showCurrencyResults() {
+            const targetCurrency = document.getElementById('targetCurrency').value;
+            const currencyResults = document.getElementById('currencyResults');
+            const selectedCurrencyName = document.getElementById('selectedCurrencyName');
+            const convertedBreakdown = document.getElementById('convertedBreakdown');
+
+            if (!targetCurrency || !calculationResults) {
+                currencyResults.style.display = 'none';
+                return;
+            }
+
+            const rate = exchangeRates[targetCurrency];
+            if (!rate) {
+                alert('Currency rate not available');
+                return;
+            }
+            
+            const data = calculationResults;
+            
+            // Determine decimal places based on currency
+            const decimals = (targetCurrency === 'JPY' || targetCurrency === 'KRW') ? 0 : 2;
+            const symbol = getCurrencySymbol(targetCurrency);
+
+            selectedCurrencyName.textContent = targetCurrency;
+
+            let html = '';
+            
+            try {
+                // Convert results based on service type
+                switch(data.serviceType) {
+                    case 'Restaurant':
+                        const convertedBill = (data.billAmount || 0) * rate;
+                        const convertedTip = (data.tipAmount || 0) * rate;
+                        const convertedTotal = (data.totalAmount || 0) * rate;
+                        
+                        html = `
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <span>Bill Amount:</span>
+                                <span style="font-weight: bold;">${symbol}${convertedBill.toFixed(decimals)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <span>Tip (${data.tipPercentage || 0}%):</span>
+                                <span style="font-weight: bold;">${symbol}${convertedTip.toFixed(decimals)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #4285f4;">
+                                <span>Total Amount:</span>
+                                <span style="font-weight: bold; color: #4285f4;">${symbol}${convertedTotal.toFixed(decimals)}</span>
+                            </div>
+                        `;
+                        
+                        if (data.splitBetween && data.splitBetween > 1) {
+                            const convertedPerPersonBill = (data.perPersonBill || 0) * rate;
+                            const convertedPerPersonTip = (data.perPersonTip || 0) * rate;
+                            const convertedPerPersonTotal = (data.perPersonTotal || 0) * rate;
+                            
+                            html += `
+                                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #f0f0f0;">
+                                    <div style="font-weight: bold; margin-bottom: 10px; color: #4285f4;">Split ${data.splitBetween} ways:</div>
+                                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                        <span>Bill per person:</span>
+                                        <span style="font-weight: bold;">${symbol}${convertedPerPersonBill.toFixed(decimals)}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                        <span>Tip per person:</span>
+                                        <span style="font-weight: bold;">${symbol}${convertedPerPersonTip.toFixed(decimals)}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 5px 0; border-top: 1px solid #e0e0e0; margin-top: 5px; padding-top: 8px;">
+                                        <span>Total per person:</span>
+                                        <span style="font-weight: bold; color: #4285f4;">${symbol}${convertedPerPersonTotal.toFixed(decimals)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        break;
+                        
+                    default:
+                        // For other service types, just convert the main amounts
+                        if (data.totalTip !== undefined) {
+                            const convertedTipAmount = (data.totalTip || 0) * rate;
+                            html = `
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #4285f4;">
+                                    <span>Total Tip:</span>
+                                    <span style="font-weight: bold; color: #4285f4;">${symbol}${convertedTipAmount.toFixed(decimals)}</span>
+                                </div>
+                            `;
+                        } else if (data.totalAmount !== undefined) {
+                            const convertedTotal = (data.totalAmount || 0) * rate;
+                            const convertedTipAmount = (data.tipAmount || 0) * rate;
+                            html = `
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                    <span>Tip Amount:</span>
+                                    <span style="font-weight: bold;">${symbol}${convertedTipAmount.toFixed(decimals)}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #4285f4;">
+                                    <span>Total Amount:</span>
+                                    <span style="font-weight: bold; color: #4285f4;">${symbol}${convertedTotal.toFixed(decimals)}</span>
+                                </div>
+                            `;
+                        } else {
+                            const convertedTipAmount = (data.tipAmount || 0) * rate;
+                            html = `
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #4285f4;">
+                                    <span>Tip Amount:</span>
+                                    <span style="font-weight: bold; color: #4285f4;">${symbol}${convertedTipAmount.toFixed(decimals)}</span>
+                                </div>
+                            `;
+                        }
+                        break;
+                }
+
+                convertedBreakdown.innerHTML = html;
+                currencyResults.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Currency conversion error:', error);
+                alert('Error converting currency. Please try again.');
+            }
+        }
+
+        function getCurrencySymbol(currency) {
+            const symbols = {
+                EUR: '€',
+                GBP: '£',
+                JPY: '¥',
+                CAD: 'C$',
+                AUD: 'A$',
+                CHF: 'CHF ',
+                CNY: '¥',
+                INR: '₹',
+                KRW: '₩',
+                MXN: '$'
+            };
+            return symbols[currency] || currency + ' ';
+        }
+
+        function updateCurrencyConversion() {
+            try {
+                calculateTip();
+                const targetCurrency = document.getElementById('targetCurrency').value;
+                if (targetCurrency) {
+                    showCurrencyResults();
+                }
+            } catch (error) {
+                console.error('Update currency conversion error:', error);
+                alert('Error updating currency conversion. Please try again.');
+            }
+        }
+
+        // Initialize on page load with error handling
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Don't call updateFormForService() automatically - let user choose first
+                // The form will start empty and user needs to select a service type
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Error loading the calculator. Please refresh the page.');
+            }
+        });
+    </script>
+</body>
+</html>
